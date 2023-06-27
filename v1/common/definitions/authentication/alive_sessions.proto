@@ -1,0 +1,50 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+import "v1/common/definitions/authentication/auth_definition.proto";
+
+package nxp.v1.auth;
+
+/// 本协议文件描述会话相关信息
+
+// 客户端会话信息
+message SessionInfo {
+	// 客户端地址Client ip address
+	string peeraddr = 1;
+
+	// 客户端角色 Client role type
+	RoleType role_type = 2;
+
+	// 客户端类型 Client type
+	ClientType client_type = 3;
+
+	// 账户名 client username
+	google.protobuf.StringValue username = 4;
+
+	// 客户端ID,唯一标识，reserved
+	google.protobuf.StringValue client_id = 5;
+
+	// 上线时间time when session is established
+	google.protobuf.Timestamp online_time = 6;
+
+	// 最新活动时间latest alive time
+	google.protobuf.Timestamp alive_time = 7;
+
+};
+
+//监护仪服务器当前所有在线活动的客户端会话信息
+// Current alive sessions
+message AliveSessions {
+	repeated SessionInfo sessions = 1;
+}
+

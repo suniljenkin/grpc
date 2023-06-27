@@ -1,0 +1,73 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 注册服务,由监护仪注册服务信息
+// Details
+// 客户端提供的注册服务接口，port:9907;
+// 		
+// 客户端提供注册服务，接受监护仪服务器信息注册，以获取监护仪数据服务器地址和注册令牌token_regist。
+// 监护仪服务器向客户端颁发注册令牌token_regist。
+
+// 注册客户端会话不存在时，监护仪每5秒向客户端发起注册请求。
+// 注册客户端会话维持期间，监护仪服务器不再发起注册请求。
+
+// 客户端或服务器通讯地址或端口信息变更时，原注册令牌token_regist失效，对应会话令牌token失效，会话过期。
+// 客户端需使用新的token_regist重新认证。
+
+// The client provides registration service and accepts the information
+// registration of the monitor server to obtain the address of the monitor server
+// and the registration token (token_ regist).
+
+// The monitor server issues a registration token (token_ regist) to the client.
+
+// When the registered client session does not exist, the monitor sends a 
+// registration request to the client every 5 seconds.
+
+// During the maintenance of the registered client session, the monitor will 
+// no longer initiate the registration request.
+
+// When the address or port information of the client or server changes, 
+// the original registration token and corresponding session token become invalid, 
+// and the session expires. The monitor will regenerate a new token_regist and 
+// restart registration request to the client, and the client needs to re authenticate
+// with the new token_regist.
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "v1/common/definitions/register/register_definition.proto";
+import "v1/common/definitions/authentication/auth_definition.proto";
+
+package nxp.v1.services;
+
+// 注册服务：接受监护仪服务器地址信息注册。
+// Register Service: Discover monitor server.
+// Client acts as a gRPC server, listening on port 9907.
+// Patient Monitor acts as a gRPC client.
+service RegisterService {
+  rpc Register (RegisterRequest) returns (RegisterResponse) {}
+}
+
+// ===============================
+// 注册请求,监护仪发送
+message RegisterRequest {
+	// 注册阶段监护仪颁发的token_regist,由监护仪生成
+	// 客户端连接监护仪服务认证时需提供此信息
+    // PM server generate token_regist, and send it with MonitorServer in the RegisterRequest.
+    // Client should provide this available token_regist in the Authenticate step.
+	auth.Token token_regist = 1; 
+	// Monitor Server Info
+	regist.MonitorServer monitor_server = 2;
+	// 注册时间
+	// register time, e.g., Sun Oct 24 13:09:23 2021
+	google.protobuf.Timestamp time = 3; 
+}
+
+// 注册响应
+message RegisterResponse {
+    regist.RegisterCode code = 1;
+    string details = 2;
+}
+
+

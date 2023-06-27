@@ -1,0 +1,63 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import public "google/protobuf/wrappers.proto";
+import public "google/protobuf/timestamp.proto";
+
+package nxp.v1;
+
+// Describe a module, Refer to NXP specs. Appendix > module_id.
+// 模块标识，参数开关中将获取到当前module的属性
+// 多通道下，module_name定位具体通道
+// module_name的取值在不同版本间可能会发生变化
+// 客户端初始化时由参数开关获取到module_name属性，以此做通道定位来获取和控制
+message ModuleTag{
+	string module_id = 1;	// ModuleID:   ECG,IBP,SPO2,etc.
+	google.protobuf.StringValue module_name = 2;  // ECG,IBP_1,IBP_2,IBP_3,IBP_4,SpO2_1,SpO2_2,etc.
+	google.protobuf.StringValue module_alias = 3; // Art,CVP,SpO2_pr,etc.
+}
+
+// 参数标识
+// Describe a parameter, Refer to NXP specs. Appendix > param_id.
+message ParamTag{
+	string param_id = 1;
+	google.protobuf.StringValue param_name = 2; 
+}
+
+// 波形标识 
+// Describe a wave,Refer to NXP specs. Appendix > wave_id.
+message WaveTag{
+	string wave_id = 1;
+}
+
+// Json格式的数据定义
+// jcontent 为json数据转换的字符串内容
+// string jcontent = json.dump()
+message NxJson{
+	string jcontent = 1;
+}
+
+// 持续时间，相对于监护仪的开机时间
+// 即 c++ 中的 chrono::steady_clock
+// Duration, relative to the startup time of the monitor.
+// Refer to std::chrono::steady_clock in c++.
+message ElapsedTime {
+    sint64 elapsed_second = 1;     	// 持续时间，秒精度
+    sint64 elapsed_millisecond = 2; // 持续时间，毫秒精度
+}
+
+// 系统时间 System time
+message SystemTime {
+  // 时间戳
+  google.protobuf.Timestamp time = 1;
+  // 距离开机后的时间，持续时间，毫秒精度
+  // time elapsed since the machine power on.
+  ElapsedTime elapsed_time = 2;
+}

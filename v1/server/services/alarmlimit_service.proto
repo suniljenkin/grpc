@@ -1,0 +1,88 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 参数报警限服务
+// Details
+// 参数报警限配置服务。
+// 提供参数超限报警配置获取和设置的服务。
+
+// AlarmLimitService provides methods for querying and setting physiological alarm limits.
+
+syntax = "proto3";
+
+package nxp.v1.services;
+
+import "v1/common/definitions/common.proto";
+import "v1/common/definitions/alarmlimit/alarmlimit.proto";
+
+// The AlarmLimit service definition.
+
+service AlarmLimitsService {
+
+	// 获取所有参数超限报警配置 GET
+	// Get all the available physiological alarm limits.
+	// ROLE_GUEST|ROLE_OPERATOR
+	rpc GetParamAlarmLimits (ParamAlarmLimitsRequest) returns (ParamAlarmLimitsResponse) {}
+
+	// 获取某模块的参数超限报警配置
+	// Get the physiological alarm limits of the specified module.
+	// ROLE_GUEST|ROLE_OPERATOR
+	rpc GetModuleAlmLimits (ModuleAlmLimitsRequest) returns (ModuleAlmLimitsResponse) {}
+
+	// 设置某模块的参数超限报警配置
+	// Set the physiological alarm limits of the specified module.
+	// ROLE_OPERATOR
+	rpc SetModuleAlmLimits (SetModuleAlmLimitsRequest) returns (SetModuleAlmLimitsResponse) {}
+
+}
+
+//==========================================
+// 获取所有参数报警配置的请求和返回
+message ParamAlarmLimitsRequest{
+	Head head = 1;
+}
+message ParamAlarmLimitsResponse{
+	RespHead head = 1;
+	alarm.MultiModuleAlmLimits limits = 5;
+}
+
+//==========================================
+// 获取某模块的参数报警配置的请求 返回
+message ModuleAlmLimitsRequest{
+	Head head = 1;
+
+	message Condition {
+		// 请求条件module_tag未指定时，返回BAD_REQUEST
+		// If module_tag is NOT given, Response BAD_REQUEST
+		ModuleTag module_tag = 1;
+		// 请求条件param_tag未指定时，返回module_tag下的所有子参数报警信息
+		// If param_tag is NOT given, 
+		// response all the alarm limits of all sub parameters under module.
+		repeated ParamTag param_tag = 2;
+	}
+	Condition cond = 5;
+}
+
+message ModuleAlmLimitsResponse{
+	RespHead head = 1;
+
+	alarm.ModuleAlmLimits limits = 5;
+}
+
+//==========================================
+// 设置某模块的参数报警配置的请求 返回
+message SetModuleAlmLimitsRequest{
+	Head head = 1;
+	// If limits is NOT given, Response BAD_REQUEST
+	alarm.ModuleAlmLimits limits = 5;
+}
+
+message SetModuleAlmLimitsResponse{
+	RespHead head = 1;
+	alarm.ModuleAlmLimits limits = 5;
+}
+
+
+
+

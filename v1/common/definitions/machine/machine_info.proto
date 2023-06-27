@@ -1,0 +1,54 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+
+import public "v1/common/definitions/datatype.proto";
+import "v1/common/definitions/machine/machine_definition.proto";
+
+package nxp.v1.machine;
+
+/// 本协议文件描述机器设备信息及其属性
+
+/// 监护仪机器信息
+message MachineInfo {
+	// 监护仪唯一标识 
+	// unique identifier, consistently representing the machine(Patient Monitor)
+	// e.g., mach_uuid："964aedb3-81d8-4162-8e4c-23439b698b51"
+	string mach_uuid = 1;
+	/*{
+		"machineinfo": {
+			"mach_uuid": "964aedb3-81d8-4162-8e4c-23439b698b51",
+			"mach_model": "RespArray",
+			// "mach_name": "RespArray",
+			// "department": "",
+			"mac": {
+				"eth0": "00:00:00:00:00:00",
+				"wlan0":"80:c9:55:1a:b6:e8"
+			}
+		}
+	}*/
+	NxJson mach_info = 2;
+	
+	// 存储空间信息,Disk Space usage
+	DiskSpaceUsage disk_usage = 3;
+	
+	// 机器序列号, Serial Number
+	google.protobuf.StringValue serial_number = 4;
+	
+	// [EDAN]
+	string manufacturer = 5;
+	// RespArray iX10
+	string mach_model = 6;
+	// Wired MAC  00:00:00:00:00:00
+	google.protobuf.StringValue mac_eth0 = 7;
+	// Wi-Fi MAC  80:c9:55:1a:b6:e8
+	google.protobuf.StringValue mac_wlan0 = 8;
+}
+

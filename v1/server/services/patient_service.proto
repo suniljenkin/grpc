@@ -1,0 +1,95 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 病人服务，接收、解除、更新病人信息
+// Details:
+//   PatientService provides methods for admiting, discharging, 
+//   updating and obtaining patient information.
+
+syntax = "proto3";
+
+package nxp.v1.services;
+
+import "v1/common/definitions/common.proto";
+import "v1/common/definitions/patient/patient_info.proto";
+
+
+// The Patient service definition.
+
+service PatientService {
+  // 获取病人信息 Get patient information.
+  // ROLE_GUEST|ROLE_OPERATOR
+  rpc GetPatientInfo (PatInfoRequest) returns (PatInfoResponse) {}
+ 
+  // 更新全部病人信息，暂未实现
+  rpc UpdatePatientInfo (UpdatePatInfoRequest) returns (UpdatePatInfoResponse) {}
+  
+  // 更新部分病人信息
+  // Patch patient information, change or update patient items, e.g., MRN, patient name etc.
+  // ROLE_OPERATOR
+  rpc PatchPatientInfo (PatchPatInfoRequest) returns (PatchPatInfoResponse) {}
+  
+  // 新建接收病人 Admit a new patient.
+  // ROLE_OPERATOR & CLIENT_LOCAL_APP|CLIENT_CMS_DCS
+  rpc AdmitPatient (AdmitPatRequest) returns (AdmitPatResponse) {}
+  
+  // 解除当前病人Discharge patient.
+  // ROLE_OPERATOR
+  rpc DisChargePatient (DisChargePatRequest) returns (DisChargePatResponse) {}
+
+}
+
+// 获取病人信息的请求和返回
+message PatInfoRequest{
+	Head head = 1;
+}
+message PatInfoResponse{
+	RespHead head = 1;
+	patient.PatientInfo patinfo = 5;
+}
+
+// 更新全部病人信息的请求和返回
+message UpdatePatInfoRequest{
+	Head head = 1;
+	patient.PatientInfo patinfo = 5;
+}
+message UpdatePatInfoResponse{
+	RespHead head = 1;
+	patient.PatientInfo patinfo = 5;
+}
+
+// 更新部分病人信息的请求和返回
+message PatchPatInfoRequest{
+	Head head = 1;
+	patient.PatientInfo patinfo = 5;
+}
+message PatchPatInfoResponse{
+	RespHead head = 1;
+	patient.PatientInfo patinfo = 5;
+}
+
+// 新建、接收病人请求与返回
+message AdmitPatRequest{
+	Head head = 1;
+	// 预设置的新病人信息
+	// Patient information preset for the new patient
+	patient.PatientInfo patinfo = 5;
+}
+message AdmitPatResponse{
+	RespHead head = 1;
+	// 正常接收状态下的全部病人信息
+	// information of the new patient addmitted
+	patient.PatientInfo patinfo = 5;
+}
+
+// 解除当前病人请求与返回
+message DisChargePatRequest{
+	Head head = 1;
+	string patient_uuid = 5;
+}
+message DisChargePatResponse{
+	RespHead head = 1;
+	patient.PatientInfo patinfo = 5;
+}
+

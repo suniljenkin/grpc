@@ -1,0 +1,69 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+import public "v1/common/definitions/datatype.proto";
+
+package nxp.v1.wave;
+
+/// 本协议文件说明参数波形信息
+/* PACE 波形
+		ECG_PACE: R波和PACE标记
+		bit15：R波，bit14：PACE
+*/
+
+// ========================
+
+message ParamWaves {
+	repeated ModuleParamWaves waves = 1;
+}
+
+// 以模块为单位的波形组消息描述
+message ModuleParamWaves {
+  // ModuleID: ECG/IBP, Refer to Appendix > module_id
+  ModuleTag module_tag = 1;
+  
+  message WaveDesc {
+  	// id,
+  	// ECG_I, Refer to Appendix > wave_id
+  	WaveTag wave_tag = 1; 
+  	// wave data
+	repeated sint32 wave_values = 2;
+	// 缩放系数 
+	sint32 scale = 3;	
+	// 采样率  
+    // the number of data points within one second time period (SPS).
+    // A wave’s sample depends on the device(exp:Nellcor), which usually
+    // is a fixed value for a certain device. 
+	sint32 sample = 4;   
+	sint32 base = 5;     			// 基线
+	sint32 min = 6;     			// 最小值 
+	sint32 max = 7;     			// 最大值
+
+	google.protobuf.Int32Value quality = 9;	// 波形质量
+	// Refer to Appendix > unit_type 
+	google.protobuf.StringValue unit_type = 10;   
+	
+	message PrivateDef{
+    	google.protobuf.StringValue source = 1;	
+    }
+    PrivateDef pri_def = 20;
+  }
+  // one or more waves of the module
+  // exp: ECG_I,ECG_II...
+  repeated WaveDesc waves = 2;
+  // 数据产生时刻的系统时间
+  // Data time:
+  // system time, elapsed time since power on
+  SystemTime data_time = 3;
+}
+

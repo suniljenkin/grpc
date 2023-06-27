@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package nxp.v1.services;
+
+// The greeting service definition.
+service MonitorUIService {
+  // Sends a greeting
+  rpc GetParams (Request) returns (Response){}
+  rpc AddParams (InputRequest) returns (UpdatedReply){}
+
+  rpc GetPatientDetails (Request) returns (Response){}
+  rpc AddPatientDetails (InputRequest) returns (UpdatedReply){}
+
+  rpc GetAlarmLimits (Request) returns (Response){}
+  rpc AddAlarmLimits (InputRequest) returns (UpdatedReply){}
+
+  rpc GetAlarms (Request) returns (Response){}
+  rpc AddAlarms (InputRequest) returns (UpdatedReply){}
+
+   rpc GetMachineInfo (Request) returns (Response){}
+  rpc AddMachineInfo (InputRequest) returns (UpdatedReply){}
+
+   rpc GetMachineVersion (Request) returns (Response){}
+  rpc AddMachineVersion (InputRequest) returns (UpdatedReply){}
+
+}
+
+message Request{
+}
+message Response{
+    string message = 1;
+}
+message InputRequest{
+    string message = 1;
+}
+
+// The response message containing the greetings.
+message UpdatedReply {
+  string message = 1;
+  string statusCode = 2;
+}

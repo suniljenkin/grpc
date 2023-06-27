@@ -1,0 +1,116 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 通知服务
+// Details 客户端接收通知：系统状态、配置变更通知等
+// 通知服务。
+//    • 每秒实时发送系统工作模式、系统状态、电源电池状态和报警状态等信息；
+//    • 事件通知：病人事件产生，报警配置变更等情况下，即时发送通知事件。
+// 客户端在收到事件通知后，根据业务需求做出响应或向监护仪服务器请求数据。
+
+// Transfer system working mode, system status, alarm status, 
+// power and battery status once every one second, and other notifications
+// when corresponding event occurs.
+
+// Event notification: in case of patient event generation
+// and alarm configuration change, the notification event
+// will be sent immediately. After receiving the event notification,
+// the client responds according to the business requirements or requests data
+// from the monitor server.
+syntax = "proto3";
+
+package nxp.v1.services;
+
+import "v1/common/definitions/common.proto";
+
+import "v1/common/definitions/patient/patient_info.proto";
+import "v1/common/definitions/patient/patient_notify.proto";
+
+import "v1/common/definitions/paramlist/paramlist.proto";
+import "v1/common/definitions/alarmlimit/alarmlimit.proto";
+import "v1/common/definitions/alarmlimit/arrlimit.proto";
+
+import "v1/common/definitions/modulesettings/power_status.proto";
+import "v1/common/definitions/system/system_status.proto";
+
+import "v1/common/definitions/authentication/alive_sessions.proto";
+
+// The Notification service definition.
+service NotificationService {
+  // 实时系统状态，配置变更通知
+  // Transfer system working mode,system status, alarm status, 
+  // power and battery status once every one second, 
+  // and other notifications when corresponding event occurs.
+  // ROLE_GUEST|ROLE_OPERATOR
+  rpc TransferNotifications (NotificationRequest) returns (stream Notifications) {}
+  
+}
+
+//===========================================
+// 通知请求
+message NotificationRequest {
+	Head head = 1;
+}
+
+//===========================================
+// 上发的状态信息集合，需要实时通知的状态信息
+// The collection of status information notified in real time once every one second
+message StatusSet{
+	// 系统状态信息：监护、实时、DEMO、待机、静音等
+	// System status, e.g., Moniting, Standby, Real, Demo, Audio Off etc.
+	system.SystemStatus sys_status = 1;  
+	// 电池电源状态信息
+    // Battery and AC power supply status
+	repeated power.PowerStatus power_status = 2; 
+	
+}
+
+// 上发的事件通知集合，需要即时通知的事件、变更通知
+// The collection of notifications requiring to be sent immediately
+// when corresponding event occurs.
+message NotifySet{
+	// 病人事件通知：接收 解除 更新等
+	// Admit, update, confirm or discharge a patient 
+	patient.PatientNotify pat_nfy = 1;
+	// 参数开关变更
+	// Active or inactive a module or a parameter 
+	paramlist.ParamListNty paramload_nty = 2;
+	// 参数报警上下限配置变更
+	// Physiological parameter alarm limit changed
+	alarm.PhyAlarmLimitNty phylimit_nty = 3;
+	// 心律失常报警上下限配置变更
+	// Arrhythmia limit changed
+	alarm.ArrLimitNty arrlimit_nty = 4;
+
+}
+
+// 上发的订阅信息集合，订阅后变更的信息直接上发实体数据
+message EntitySet{
+
+}
+
+// 通知消息定义集合
+message Notifications {
+	repeated Notification notifications = 1;
+}
+
+// 通知消息定义
+message Notification {
+	// 状态信息集，持续发送
+	// The collection of status information notified in real time once every one second
+	StatusSet status = 1; 
+	
+	// 做通知用，不带实体信息,客户端需要根据自身业务请求对应信息
+	// The collection of notifications requiring to be sent immediately 
+	// when corresponding event occurs.
+	NotifySet notifys = 2; 
+	
+	// 订阅后自动发送的实体信息,Reserved
+	EntitySet entitys = 3; 
+
+	// 系统时间
+	SystemTime system_time = 5;
+
+}
+

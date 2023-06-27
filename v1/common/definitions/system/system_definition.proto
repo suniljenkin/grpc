@@ -1,0 +1,44 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import public "google/protobuf/wrappers.proto";
+
+package nxp.v1.system;
+
+/// 本协议文件描述系统信息的定义
+
+// 系统工作模式
+enum SysWorkModeE{
+	WORKMODE_UNSPECIFIED = 0; // 未指明
+	WORKMODE_REAL = 1; 	 // 实时模式
+	WORKMODE_DEMO = 2;   // DEMO模式
+}
+
+// 监护模式
+enum MonitorModeE {
+	MONITOR_MODE_UNSPECIFIED = 0; // 未指明
+  	MONITOR_MODE_MONITORING = 1;  // regular monitoring
+  	MONITOR_MODE_STANDBY = 2;     // 待机模式
+};
+
+// 报警系统状态
+enum AlarmStatusE {
+	ALARM_STATUS_UNSPECIFIED = 0; // 未指明
+	ALARM_AUDIO_NORMAL = 1;  // 正常
+	ALARM_AUDIO_OFF = 2;     // 静音
+	ALARM_AUDIO_PAUSED = 3;  // 声音暂停
+};
+
+// 网络状态
+message RemoteSystemStatus {
+	bool remote_ctrl_enable = 1; // 远程控制开关，根据权限对不同客户端发送不同信息
+	bool remote_monitor_status = 2; // 远程监护状态
+	bool remote_monitor_connection = 3; // 远程监护系统连接状态
+}

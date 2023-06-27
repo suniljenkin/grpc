@@ -1,0 +1,74 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+
+
+package nxp.v1.alarm;
+
+
+/// 枚举表示的报警级别
+enum AlarmPriority{
+	// 表示报警提示信息，比如导联脱落的提示信息
+	// Notice or message, such as “ECG lead Off”
+	MESSAGE = 0;  
+	LOW = 1;      ///< 低级 "low", display alarm prefix: “*”
+	MEDIUM = 2;   ///< 中级 "medium"，display alarm prefix: “**”
+	HIGH = 3;     ///< 高级 "high"，display alarm prefix: “***”
+};
+
+message AlarmPriorityE{
+	// 表示报警提示信息，比如导联脱落的提示信息
+	// Notice or message, such as “ECG lead Off”
+	AlarmPriority priority = 1;
+};
+
+/// 报警上下限,定义参数报警的阈值
+message AlarmThreshold {
+  	sint32 upper = 1;
+  	sint32 lower = 2;
+	google.protobuf.Int32Value upper_panic = 3;   // 次级报警上限
+	google.protobuf.Int32Value lower_panic = 4;   // 次级报警下限
+	
+	google.protobuf.Int32Value invalid_value = 5;       // 报警限的无效值
+	
+/* 单位字符串ISO标准定义,unit_type为等号右侧值
+		kUnitPercent = "%";
+		kUnitKpa = "kpa";
+		kUnitMmhg = "mm(hg)";
+		kUnitBpm = "bpm";
+		kUnitRpm = "rpm";
+		kUnitMv = "mv";
+		kUnitDegreeC = "cel";
+		kUnitDegreeF = "degf";
+		kUnitFlow = "L/min";
+		kUnitFlowM2 = "L/min/m2";
+		kUnitSecond = "s";
+		kUnitMinute = "min";
+		kUnitMsec = "ms";
+		kUnitPerMinute = "/min";
+		kUnitM2 = "m2";
+		kUnitCm = "cm";
+		kUnitInch = "in";
+		kUnitPound = "lb";
+		kUnitKg = "kg";
+		kUnitNull = "";
+*/
+	google.protobuf.StringValue unit_type = 6;   // 数值的单位
+	google.protobuf.Int32Value scale = 7;      // 数据缩放比例，注意这个是以10为底的指示 0表示10^0=1倍，
+												// 2表示10^2=100倍，-2表示10^(-2) = 0.01
+};
+
+/// 报警设置信息，包括报警上下限、开关、级别等, 表示心律失常和参数超限报警配置
+message AlarmLimit {
+	google.protobuf.BoolValue switch = 1;    ///< 报警开关
+	AlarmPriorityE priority = 2;  		///< 报警级别配置信息
+	AlarmThreshold threshold = 3;
+}
+

@@ -1,0 +1,86 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 用户认证,业务层会话管理
+// Details: 认证、保活
+// 	连接成功之后:
+//		第一步 认证,获取会话token
+//		第二步 以token凭证 获取数据或控制
+// 	监护仪服务器提供认证服务，对客户端做本地身份认证，认证通过则创建会话。
+// 	认证服务主要对客户端类型、角色及账户信息做校验。
+//	TODO: LDAP,账户认证管理
+
+//	The monitor server provides authentication service to 
+//	authenticate identity of the client with local method. 
+//	If the authentication is passed, a session is created.
+//	The authentication service mainly verifies the client type, 
+//	role and account information.
+
+syntax = "proto3";
+
+package nxp.v1.services;
+
+import "v1/common/definitions/common.proto";
+import "v1/common/definitions/authentication/auth_definition.proto";
+
+// The Authentication service definition.
+
+service AuthenticationService {
+  // 客户端建立连接后，第一步要认证以获取会话令牌token，
+  // 所有的rpc调用均需有效token；
+  // After the client establishes the connection, the first
+  // step is to authenticate to obtain the session token. 
+  // All RPC calls need a valid token.
+  
+  // RoleType-ClientType : NOT Limited
+  
+  rpc Authenticate (AuthRequest) returns (AuthResponse) {}
+  
+  // 客户端连接期间，以KeepAlive做保活，保活周期10s；
+  // 服务器每收到AliveRequest或每rpc调用，即更新对应客户端会话
+  // 的Token状态。超过保活周期则Token失效，服务端将清理失效Token
+  // 的客户端会话；客户端需要重新认证获取新的Token来建立新的会话。
+  
+  // During the session maintenance, KeepAlive is used to 
+  // keep alive with a period of 10 seconds.
+  // The server updates the token status of the corresponding 
+  // client session every time it receives a keepalive request 
+  // or any RPC call. If the keepalive period is exceeded, the
+  // token becomes invalid, and the server will clean up the 
+  // client session of the invalid token. The client needs to re 
+  // authenticate and obtain a new token to establish a new session.
+  
+  // RoleType-ClientType : NOT Limited
+  
+  rpc KeepAlive (stream AliveRequest) returns (stream AliveResponse) {}
+
+}
+
+message AuthRequest {
+	// 客户端在注册阶段得到的监护仪颁发的token_regist
+	// Registration token issued by the monitor in the 
+	// registration phase.
+	auth.Token token_regist = 1;
+}
+
+message AuthResponse {
+	RespHead head = 1;
+
+	//认证通过后，监护仪服务器颁发的会话Token，客户端以此作为调用凭证
+	// Session token issued by the monitor server if 
+	// the authentication is passed, which is used by 
+	// the client as the calling credential.
+	auth.Token token = 2;   
+}
+
+message AliveRequest {
+	Head head = 1; 
+}
+
+message AliveResponse {
+	RespHead head = 1;
+}
+
+
+

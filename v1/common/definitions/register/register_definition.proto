@@ -1,0 +1,32 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+package nxp.v1.regist;
+
+/// 本协议文件描述注册相关信息
+
+// 监护仪服务信息
+// Monitor Server Information
+message MonitorServer {
+  string mserver_ip = 1;		// 监护仪服务器ip地址 Monitor Server IP
+  sint32 mserver_port = 2;		// 监护仪服务器端口号 Monitor Server Port
+  // monitor server's name, for SetSslTargetNameOverride if nessasery
+  google.protobuf.StringValue mserver_name = 3;
+  google.protobuf.BoolValue mserver_encryption = 4;
+}
+
+// Register response code
+enum RegisterCode {
+	REGISTER_UNSPECIFIED = 0; 	// 未知 Unknown
+	REGISTER_OK = 1;			// 成功 Success
+  	REGISTER_ERROR = 2;			// 失败 Error or Fail
+};

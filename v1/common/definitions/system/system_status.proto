@@ -1,0 +1,27 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import public "v1/common/definitions/system/system_definition.proto";
+
+package nxp.v1.system;
+
+/// 本协议文件描述POWER电池模块状态信息
+
+message SystemStatus {
+ 	SysWorkModeE sys_workmode = 1; // DEMO、实时
+ 	MonitorModeE monitor_mode = 2; // 监护、待机
+	AlarmStatusE alarm_status = 3; // 静音、暂停、正常
+	
+	RemoteSystemStatus remote_status  = 5; // 网络状态
+}
+
+
+
+

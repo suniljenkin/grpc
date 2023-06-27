@@ -1,0 +1,42 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import public "v1/common/definitions/datatype.proto";
+
+package nxp.v1.power;
+
+/// 本协议文件描述POWER电池模块信息定义
+
+// 电池充电状态
+// Power battery module information definition
+// Battery state of charge
+enum BatteryChargeStatus{
+	CHARGE_UNSPECIFIED = 0;
+	CHARGE_HANGUP = 1;  ///< 充电挂起     Charging suspended
+	CHARGE_LOW = 2; 	///< 充电中（慢充）Charging (slow charging)
+	CHARGE_QUICK = 3;	///< 充电中（快充）Charging (fast charging)
+	CHARGE_DONE = 4; 	///< 充电完成（或未充电）Charging completed (or not charged)
+}
+
+message BatteryStatus {
+	// 电池是否在位: ture:在位； false:不在位
+	// Whether the battery is in place:
+	// ture: in place; 
+	// false: not in place
+	bool in_use = 1;
+	/// 电池充电状态,Battery state of charge
+	BatteryChargeStatus charge = 2;
+	// 电池电量0-100(%)
+	// Current power percentage0-100 (%)
+	google.protobuf.Int32Value volume = 3;
+}
+
+
+

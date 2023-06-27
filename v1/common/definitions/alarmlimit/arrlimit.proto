@@ -1,0 +1,43 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import public "v1/common/definitions/alarmlimit/alarmlimit_definition.proto";
+
+package nxp.v1.alarm;
+
+
+// 心律失常报警配置
+message ArrLimit {
+	// arr_id: ASYSTOLE_33, Refer to Appendix > arr_id
+	string arr_id = 1;
+	AlarmLimit limit = 2;
+};
+
+message ArrLimits {
+	repeated ArrLimit arr_limits = 1;
+};
+
+
+// 心律失常报警设置变化通知
+message ArrLimitNty{
+	// 涉及变更的arr_ids，未指定则涉及全部变更
+	// 客户端获取变更的arr_ids报警限信息；
+	// arr_ids未指定时，客户端获取全部arrlimit
+	// arr_ids involving change, if not specified, all changes are involved.
+	// Client needs to get changed arr_ids alarm limits information;
+	// When arr_ids is not specified, the client needs to get all the arr limits
+	repeated string arr_ids = 5;
+
+	// 变更的实体信息，具体变更内容;
+	// 一般通知信息中不含实体信息;客户端根据需要自动获取
+	// 订阅后含实体变更信息
+	// arr limits that changed
+	ArrLimits entity = 6;
+}

@@ -1,0 +1,60 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import public "v1/common/definitions/datatype.proto";
+import public "v1/common/definitions/alarmlimit/alarmlimit_definition.proto";
+
+package nxp.v1.alarm;
+
+// 参数超限报警配置
+// Alarm limits of a parameter
+message ParamLimit {
+	// Refer to Datatype>ParamTag
+	ParamTag param_tag = 1;
+	AlarmLimit limit = 2;
+};
+
+// 模块的参数超限报警配置
+// Alarm limits of the sub- parameters under a module
+message ModuleAlmLimits {
+	// Refer to Datatype>ModuleTag
+	ModuleTag module_tag = 1;
+	repeated ParamLimit param_limits = 2;
+}
+	
+// 多模块的参数超限报警配置信息
+// Alarm limits of the sub- parameters under one or more modules
+message MultiModuleAlmLimits {
+	repeated ModuleAlmLimits limits = 1;
+};
+
+// 参数超限报警设置变化通知
+message PhyAlarmLimitNty{
+	// 涉及变化的参数id; 未指定则表示变更信息涉及此模块下的所有参数
+	// 客户端获取变更的param_tags报警限信息；
+	// param_tags未指定时，客户端获取全部alarmlimit
+	// Parameter ID involving change; 
+	// If not specified, it means that the change information involves all parameters under this module.
+	// Client gets changed param_tags alarm limit information;
+	// When param_tags is not specified, the client obtains all alarmlimits.
+	message ParamTags {
+		ModuleTag module_tag = 1;
+		repeated ParamTag param_tags = 2;
+	}
+	repeated ParamTags param_tags = 5;
+
+	// 变更的实体信息，具体变更内容; 
+	// 一般通知信息中不含实体信息;订阅后含实体变更信息
+	// 客户端收到通知消息，根据业务需求请求相应信息
+	// Information that has been changed
+	MultiModuleAlmLimits entity = 6;
+}
+
+

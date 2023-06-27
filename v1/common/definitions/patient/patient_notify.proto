@@ -1,0 +1,90 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 本协议文件描述病人操作信息，接收、解除、信息更新等
+// Details:
+//   This file details patient event notification,
+//   including admit, discharge and update patient
+//   information, etc.
+
+
+syntax = "proto3";
+
+package nxp.v1.patient;
+
+import public "v1/common/definitions/datatype.proto";
+
+
+// 病人处理事件 Patient Event ID Definition
+enum PatEventID{
+  PatEv_Null = 0;
+  PatEv_All = 1;
+ 
+  // 已接收病人 A new patient has been Admitted
+  PatEv_Admitted = 2;
+  // 已修改病人信息Patient information has been Changed
+  PatEv_InfoChanged = 3;
+
+  // 已解除病人Patient has been Discharged
+  PatEv_Discharged = 4;
+
+  // 已确认当前病人
+  // Current patient has been Confirmed
+  PatEv_Confirmed = 5;
+
+  // 已转移病人，未使用
+  // Current patient has been Transferred, Reserved,unuse
+  PatEv_Transferred = 6;
+
+  // 已变更病人配置集
+  // Profile of the patient has been Changed 	 
+  PatEv_ProfileChanged = 7;
+
+  // 已加载当前病人信息, 
+  // If a patient has  not been discharged before the machine
+  // power off, the same patient information would be loaded
+  // once the machine power on, except the uuid of the patient
+  // would be given a new one. 
+  PatEv_InfoPreLoaded = 8;
+  
+  // 关联配置名称改变
+  // Profile name of the patient has been Changed
+  PatEv_AssociateProfileNameChanged = 9;
+  
+  // 已预接收病人
+  // A new patient has been pre admitted
+  PatEv_PreAdmitted = 10;
+
+  // 当前病人信息的属性发生变化，比如可见性、可编辑性，可选项等
+  // Metadata of current patient changed, including visable,editable,options etc.
+  PatEv_InfoMetaChanged = 11;
+};
+
+// 病人事件通知消息
+// PatientNotify will be sent in the notification service stream 
+// to notify the client that patient information has been changed.
+message PatientNotify {
+  PatEventID event_id = 1;
+
+  string profile_name = 2;  // profile_name
+  
+  // profile type: [default | userDefined]
+  string profile_type = 3; 
+  string patient_type = 4;  // patient type
+  string patient_uuid = 5;  // uuid
+
+  // This field will always indicates current patient information,
+  // except that when event_id is PatEv_Discharged, it will be 
+  // filled with the patient information that has been discharged.
+  //
+  // When event_id is PatEv_InfoMetaChanged, it should be
+  // considered as an optional field. If the client is concerned
+  // about the metadata, parses this filed or requires patient 
+  // metadata from the server, otherwise, ignores this event.
+  NxJson patient_info = 6; 
+};
+
+
+
+

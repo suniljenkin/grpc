@@ -1,0 +1,64 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+package nxp.v1.auth;
+
+/// 本协议文件描述用户相关信息
+
+
+// 角色Role Type，refer to Monitor Services
+enum RoleType{
+  ROLE_UNSPECIFIED = 0;
+  ROLE_EMERGENCY = 1;	// 紧急模式 Emergency mode
+  ROLE_GUEST = 2;		// 访客 Guest
+  ROLE_OPERATOR = 3;	// 操作者 Operator
+  ROLE_DEVICE_OWNER = 4;// 设备所有者 Device owner
+  ROLE_MANUFACTOR= 5;	// 设备制造商 Manufacturer
+}
+
+// 客户端类型 Client Type
+enum ClientType{
+  CLIENT_UNSPECIFIED = 0;
+  CLIENT_LOCAL_APP = 1;		// 本地客户端 Local Client App
+  CLIENT_NX_VIEWER = 2;		// NX观察端 Nx Viewer Client
+  CLIENT_NX_MOBILE = 3;		// NX移动端 Nx Mobile Client
+  CLIENT_CMS_DCS = 4;			// 中央站服务端 CMSIII DCS Client
+  CLIENT_CMS_CLIENT = 5;		// 中央站客户端 CMSIII Client
+  CLIENT_CMS_MOBILE = 6;		// 中央站移动端 CMS Mobile Client
+  CLIENT_MOBILE_TERMINAL = 7;	// 手机移动端 Mobile Terminal Client
+  CLIENT_THIRD_PARTY = 8;		// 第三方接入端 Third Party Client
+  CLIENT_VITAL_SYNC = 9; 		// Vital Sync Client
+
+  CLIENT_NX_MANUFACTOR_TEST = 1000;	// NX工装 Nx Manufacturer Test
+}
+
+// Different clients are assigned different roles.
+// 客户端信息
+message ClientInfo {
+  // 客户端ID,唯一标识,暂未使用 reserved
+  // google.protobuf.StringValue client_id = 1;
+  
+  // RoleType role_type = 2;
+  // ClientType client_type = 3;
+
+}
+
+// 客户端通过gRPC底层认证建立连接后，首先调用认证服务的Authenticate，获取服务端颁发的会话token，
+// 每rpc调用均需附带此token，作为会话凭证向服务端获取数据或控制操作。
+// After the client establishes the connection through grpc underlying authentication,
+// it first calls authenticate of the authentication service to obtain the session token
+// issued by the server. Each RPC call must be accompanied by this session token to
+// request data or operations from the server as a session credential.
+message Token{
+	string token = 1;
+}
+

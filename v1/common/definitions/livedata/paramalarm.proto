@@ -1,0 +1,52 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "v1/common/definitions/livedata/alarm_definition.proto";
+
+package nxp.v1.alarm;
+
+message ParamAlarms{
+	repeated ParamAlarm alarms = 1;
+}
+
+message ParamAlarm {
+	EventType event_type = 1; 
+	
+	ModuleTag module_tag = 2;
+
+	// Refer to Appendix->Alarm Data
+	string event_id = 4;
+	// 报警级别
+	// Clients would get the alarm priority within the same message,
+	// no matter it has a variable severity or a fixed severity.
+	AlarmPriority priority = 5;	
+	EventStatus event_status = 6;	// 事件状态，表示当前事件的开始、结束、持续或栓锁的标识
+		  
+	bool is_confirmed = 7; 			// 是否已确认,报警复位触发确认
+	// event_triggers:
+	// 	"alarmRecord": 报警触发记录
+	// 	"nurseNotice": 护士呼叫
+	repeated string event_triggers = 8;	// event触发事件[alarmRecord | nurseNotice]
+	repeated string alarm_waves = 9; 	// 报警波形ID, Refer to Appendix->wave_id
+	
+	// 报警产生时刻的系统时间
+	// time when this alarm occurred
+	SystemTime occur_time = 10;
+	// 报警当前更新时的系统时间
+	// time when this alarm is sent as it stays on
+	SystemTime renew_time = 11;	
+	
+	oneof data{
+		PhyAlarmAttr phy_alarm = 20;
+		ArrAlarmAttr arr_alarm = 21;
+	}
+}
+

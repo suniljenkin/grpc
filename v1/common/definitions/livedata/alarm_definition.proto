@@ -1,0 +1,72 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+import public "v1/common/definitions/datatype.proto";
+import public "v1/common/definitions/alarmlimit/alarmlimit_definition.proto";
+
+package nxp.v1.alarm;
+
+enum EventType {
+    EVENT_UNSPECIFIED = 0;			// 
+	NOTICE_DEVICE = 1;   			// 设备的提示信息，不严重，可忽略的程度
+	ALARM_TECHNICAL = 2; 			// 技术报警
+	ALARM_PHYSIOLOGICAL= 3;   		// 生理超限报警
+	ALARM_LIFE_THREATENING = 4; 	// 生命威胁类生理报警,
+	ALARM_ARR = 5;            		// ARR报警,
+};  
+
+enum EventStatus {
+	// 新产生事件，表示该事件刚产生，从未推送给其他部件
+    // alarm start ,once alarm first send
+    EVENT_ENGENDERED = 0;
+    // 持续的事件，表示该事件产生后已经处理过并且持续产生
+    // alarm stays on
+    EVENT_SUSTAINED = 1;
+    // 已经结束的事件，表示该事件恢复正常
+    // alarm end ,once alarm end
+    EVENT_DISAPEARED = 2;
+    // 栓锁的报警, latched alarm 
+    EVENT_LATCH = 3;
+};
+
+/// 参数异常标志
+enum AbnormalType{
+    ABNORMAL_TYPE_UNSPECIFIED = 0;
+    ABNORMAL_TYPE_OFF = 1;             ///< 报警关闭 alarm off
+    ABNORMAL_TYPE_NORMAL = 2;          ///< 值正常 N : Normal,not abnormal
+    ABNORMAL_TYPE_BELOW_LOW = 3;       ///< 过低L: Below low normal
+    ABNORMAL_TYPE_BELOW_LOWER_PANIC= 4;    ///< 太低 LL: Below lower panic limits
+    ABNORMAL_TYPE_ABOVE_HIGH = 5;      ///< 过高H: Above high normal
+    ABNORMAL_TYPE_ABOVE_HIGHER_PANIC = 6;  ///< 太高HH: Above higher panic limits
+}
+
+// 生理报警,ALARM_PHYSIOLOGICAL
+message PhyAlarmAttr {
+	ParamTag param_tag = 1;
+	sint32 param_value = 2;
+	AlarmThreshold threshold = 3;
+	// 精度
+	google.protobuf.StringValue accuracy = 4;
+	google.protobuf.StringValue label = 5;
+	
+	message PrivateDef{
+    	google.protobuf.StringValue source = 1;		// SPO2/IBP(PR)
+    }
+    PrivateDef pri_def = 20;
+}
+
+// 心律失常报警,ALARM_ARR
+message ArrAlarmAttr {
+	AlarmThreshold threshold = 3;
+}
+
+

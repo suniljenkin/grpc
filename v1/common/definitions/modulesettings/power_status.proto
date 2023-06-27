@@ -1,0 +1,30 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import public "v1/common/definitions/modulesettings/power_definition.proto";
+
+package nxp.v1.power;
+
+/// 本协议文件描述POWER电池模块状态信息
+
+message PowerStatus {
+ 	// module_id: POWER
+ 	ModuleTag module_tag = 1;
+ 	
+	// POWER交流电源是否在位: ture:在位； false:不在位
+	// Whether the AC power supply is in place:
+	// true: in place;
+	// False: not in place
+	bool power_use = 5; 
+	/// 电池状态
+	BatteryStatus battery1 = 6;
+	BatteryStatus battery2 = 7;
+}
+

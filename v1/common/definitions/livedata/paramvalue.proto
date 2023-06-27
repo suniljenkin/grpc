@@ -1,0 +1,83 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+import public "v1/common/definitions/datatype.proto";
+import "v1/common/definitions/livedata/alarm_definition.proto";
+
+package nxp.v1.param;
+
+/// 本协议文件说明参数值信息
+
+message ParamValues{
+	repeated ParamValue params = 1;
+} 
+
+// 目前应用中全部发送，不区分属性；
+message ParamValue {
+    // id name alias
+    // ModuleID, e.g., ECG/IBP, Refer to Appendix > module_id
+    ModuleTag module_tag = 1; 
+
+    // id , Refer to Appendix > param_id
+    ParamTag param_tag = 3;   
+    sint32 param_value = 4;
+    // Refer to Appendix > unit_type
+    string unit_type = 5; 
+    // 无效值Invalid value 
+    sint32 invalid_value = 6; 
+    // 数据缩放比例，注意这个是以10为底的指示 
+    // 0表示10^0=1倍，
+    // 2表示10^2=100倍，
+    //-2表示10^(-2) = 0.01
+	
+    // scale for param_value
+    // 0:  10^0=1;  
+    // 2:  10^2=100;  
+    //-2:  10^(-2) = 0.01 
+    sint32 scale = 7;
+    	
+	// 0.1 (±0.1; display: 0.0); 
+	// 0.12 (±0.12; display: 0.00);
+	// exp : 
+	//     param_id = PI
+	//     param_value = 150
+	//     scale = 1 
+	//     accuracy = 0.1
+	//     PI display: 15.0 = 150 / 10^(1)
+    google.protobuf.StringValue accuracy = 8;
+
+    // 可信度,取值1-10;默认0表示参数无此属性值
+    // e.g., PR Reliability Index
+    google.protobuf.Int32Value credibility = 9;
+	
+    // Temp: Tskin/Tcore
+    google.protobuf.StringValue label = 10;	
+	
+    bool aperiodic = 11;  	// 点测数据
+   
+    // 数据产生时刻的系统时间
+    // Data time:
+    // system time, elapsed time since power on
+    SystemTime data_time = 12;   
+    
+    // abnormal type for this parameter
+    alarm.AbnormalType abnormal_type = 13;
+    // alarm limits
+    alarm.AlarmThreshold alarm_threshold = 14;
+    
+    message PrivateDef{
+    	// SPO2/IBP(PR), source of this parameter
+    	google.protobuf.StringValue source = 1;		
+    }
+    PrivateDef pri_def = 20;
+    
+}

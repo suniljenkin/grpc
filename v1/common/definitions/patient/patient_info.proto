@@ -1,0 +1,59 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+syntax = "proto3";
+
+import public "v1/common/definitions/datatype.proto";
+
+package nxp.v1.patient;
+
+/// 本协议文件描述病人信息及其属性
+
+
+// 病人信息, Json格式
+message PatientInfo {
+/*	{
+		"patientinfo": {
+			"metadata": {
+				"unit": {
+					"age": "month",
+					"weight": "kg",
+					"height": "cm",
+					"temperature": "℃"
+				}
+			},
+			"age": -1000,
+			"patientType": "adult",
+			"infoSource": "manualInput",
+			"patientID": "",
+			"uuid": "",
+			"bedLabel": "",
+			"firstName": "",
+			"lastName": "",
+			"paceSwitch": "unknown",
+			"gender": "NA",
+			"bloodType": "NA",
+			"height": -1000.0,
+			"weight": -1000.0,
+			"birthDate": "",
+			"admitDate": "",
+			"bmi": -1000.0,
+			"department": "",
+			"doctor": "",
+			"nurse": "",
+			"temperature": -1000.0
+		}
+	}
+*/
+    // An identifier for this patient, same with uuid in the NxJson patientinfo 
+    // exp: "5841e13b-571a-4d99-b82a-cebc869b25b0"
+	string patient_uuid = 1;
+	// profile for this patient
+	string profile_name = 2;
+	// detail patient information
+	NxJson patient_info = 5;
+}

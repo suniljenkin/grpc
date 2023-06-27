@@ -1,0 +1,78 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 系统服务，设置工作模式、监护模式，报警状态
+// Details
+// 系统服务，维护系统运行状态相关信息。
+//     • 提供切换工作模式为实时或DEMO的服务；
+//     • 提供切换监护模式为监护或待机的服务；
+//     • 提供设置报警静音的服务。
+
+// System service provides methods of setting alarm silence,
+// switching the working mode to real or demo and
+// switching monitoring mode to monitoring or standby.
+
+syntax = "proto3";
+
+package nxp.v1.services;
+
+import "v1/common/definitions/common.proto";
+import "v1/common/definitions/system/system_status.proto";
+
+// The Maintain service definition.
+service SystemService {
+  // 设置工作模式，实时、DEMO,[REAL |DEMO]
+  // switching the working mode to real or demo
+  // ROLE_OPERATOR
+  rpc SetSysWorkMode (SetSysWorkModeRequest) returns (SetSysWorkModeResponse) {}
+  
+  // 设置监护模式,待机,[Standby|Monitoring]
+  // switching monitoring mode to monitoring or standby
+  // ROLE_OPERATOR
+  rpc SetMonitorMode (SetMonitorModeRequest) returns (SetMonitorModeResponse) {}
+  
+  // 仅远程监护服务器可用；设置远程监护状态;开始、结束;非远程监护状态下断网报警降为提示信息
+  // Remote monitor Server ONLY, the status is used to indicate
+  // whether the device is undered remote monitoring.
+  // status true: Server disconnected should be reported as a technical alarm with medium level.
+  // status false: Server disconnected should be reported as a message level.
+  rpc SetRemoteMonitorStatus (SetRemoteMonitorRequest) returns (SetRemoteMonitorResponse) {}
+}
+
+//====================================
+// 设置实时、DEMO工作模式的请求与返回
+message SetSysWorkModeRequest{
+	Head head = 1;
+	// If mode NOT given，Response CallStatus::BAD_REQUEST
+	system.SysWorkModeE mode = 5;
+}
+message SetSysWorkModeResponse{
+	RespHead head = 1;
+	system.SysWorkModeE mode = 5;
+}
+
+//====================================
+// 设置监护、待机模式的请求与返回
+message SetMonitorModeRequest{
+	Head head = 1;
+	// If mode NOT given，Response CallStatus::BAD_REQUEST
+	system.MonitorModeE mode = 5;
+}
+message SetMonitorModeResponse{
+	RespHead head = 1;
+	system.MonitorModeE mode = 5;
+}
+
+//====================================
+// 设置远程监护的请求与返回
+message SetRemoteMonitorRequest{
+	Head head = 1;
+	bool remote_monitor = 5;
+}
+message SetRemoteMonitorResponse{
+	RespHead head = 1;
+	bool remote_monitor = 5;
+}
+
+

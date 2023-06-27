@@ -1,0 +1,114 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import "v1/common/definitions/authentication/auth_definition.proto";
+import "v1/common/definitions/datatype.proto";
+
+package nxp.v1;
+
+// 调用头信息，每rpc调用请求中均需带Head信息
+// Each RPC request message must be accompanied by this Head.
+// Head of the request message.
+message Head{
+	auth.Token token = 1;
+	SystemTime system_time = 5;
+}
+
+// 应答头信息,应答包中含RespHead，状态码及其详细信息。
+// Head of the response message.The response message contains RespHead
+// with CallStatus code and detailed information.
+message RespHead {
+  CallStatus code = 1;  
+  string msg = 2;
+  SystemTime system_time = 5;
+}
+
+// 应答状态码，业务层的响应状态，不同于grpc定义的rpc调用状态。
+// The CallStatus code is the response status of
+// the monitor’s service layer, which is different
+// from the grpc::Status defined by gRPC.
+enum CallStatus {
+	// 未知状态Unkown or Unspecified
+	CALLSTATUS_UNSPECIFIED = 0;
+	// 成功Success
+	SUCCESS = 1;
+	// 失败Failed
+	FAILED = 2;
+	// 非法操作Illegal command
+	ILLEGAL_CMD = 3;
+
+	// 服务未实现Service unimplemented
+	UNIMPLEMENTED = 4;
+	// 操作无权限，拒绝请求Permission denied
+	PERMISSION_DENIED = 5;
+
+	// 响应结果数据格式错误
+	// Payload format invalid, indicating that response data
+	// from services is not the expected one.
+	PAYLOAD_FORMAT_INVALID = 6;
+
+	// 操作请求已加入待处理队列
+	// Request has been accepted and added to the pending queue,
+	// and there is no content in the return.
+	PENDING = 7;
+	// 拒绝操作Request reject
+	REJECT = 8;
+
+	// token未找到或已过期
+	// 客户端需重新认证以获取有效会话token
+	// Session token is invalid or expired, and the client needs
+	// to re authenticate to obtain a new valid session token.
+	TOKEN_NOT_FOUND = 10;
+
+	// token已过期
+	TOKEN_EXPIRED = 11;
+
+	// 重复认证
+	// During the maintenance of the registered client session,
+	// the monitor returns this code when client initiates the
+	// same authentication request.
+	AUTHENTICATE_DUPLICATE = 20;
+
+	// 认证失败
+	// Invalid client information, e.g., username, password,
+	// client type or role.
+	AUTHENTICATE_FAILED = 21;
+	
+	// 同一会话同一时刻仅允许对同一资源的同一操作请求
+	// 前次操作未结束，重复操作则取消请求
+	// Repeated request is not allowed in the same session.
+	// If the previous request is not completed, new same
+	// request will be cancelled.
+	REQUEST_DUPLICATE = 30;
+	// 超时Timeout
+	REQUEST_TIMEOUT = 31;
+	// 错误的请求，请求条件无效
+	// Payload in the request message is NOT given or invalid.
+	BAD_REQUEST = 32;
+
+	// 当前会话数量已达最大限制
+	// The current number of active sessions has reached the
+	// maximum limit.
+	SESSION_EXCEEDED = 40;
+
+	// 会话对象未找到，或会话已过期
+	// The session object was not found or the session has
+	// expired.
+	SESSION_EXPIRED = 41;
+
+	// 待处理请求队列已达限，没有可用操作缓存，服务器忙
+	// 取消新的请求
+	// The queue of pending requests has reached the limit,
+	// no operation cache is available, and the server is busy.
+	// Cancel the new request.
+	SERVER_BUSY = 50;
+}
+
+

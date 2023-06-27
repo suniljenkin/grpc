@@ -1,0 +1,117 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 参数列表、开关
+// Details
+// 参数列表服务。
+// 	提供获取所有模块及其子参数波形的列表。
+// 	提供模块、参数开关获取和设置的服务。
+
+// ParamListService provides methods for querying a list of
+// wave_ids and param_ids of all the current available modules,
+// and active or inactive the module, parameter or waveforms.
+// Refer to Appendix-> module_id, Appendix-> param_id, Appendix-> wave_id.
+
+syntax = "proto3";
+
+package nxp.v1.services;
+
+import "v1/common/definitions/common.proto";
+import "v1/common/definitions/paramlist/paramlist.proto";
+
+// The ParamList service definition.
+
+service ParamListService {
+	// 获取所有参数开关状态 GET
+	// Get all the available parameter and waveforms list
+	// ROLE_GUEST|ROLE_OPERATOR
+	rpc GetParamList (ParamListRequest) returns (ParamListResponse) {}
+	
+	// 获取特定模块及其子参数波形开关 
+	// Get switchs of the specified module and its sub parameters and sub waveform.
+	// ROLE_GUEST|ROLE_OPERATOR
+	rpc GetModuleSwitch (ModuleSwitchRequest) returns (ModuleSwitchResponse) {}
+	
+	// 设置某模块的开关及其子参数波形开关 Patch
+	// Set switchs of the specified module and its sub parameters and sub waveform.
+	// ROLE_OPERATOR
+	rpc SetModuleSwitch (SetModuleSwitchRequest) returns (SetModuleSwitchResponse) {}
+	
+	// 获取一个或多个模块的参数开关 
+	// Get switchs of one or more modules.
+	// ROLE_GUEST|ROLE_OPERATOR
+	rpc GetMultiModuleSwitchs (MultiModuleSwitchsRequest) returns (MultiModuleSwitchsResponse) {}
+	
+	// 设置一个或多个模块的参数开关 Patch
+	// Set switchs of one or more modules.
+	// ROLE_OPERATOR
+	rpc SetMultiModuleSwitchs (SetMultiModuleSwitchsRequest) returns (SetMultiModuleSwitchsResponse) {}
+	
+}
+
+//=====================================
+// 获取 参数列表/所有开关 的请求、返回
+message ParamListRequest {
+	Head head = 1;
+}
+message ParamListResponse {
+	RespHead head = 1;
+	paramlist.ParamList paramlist = 5;
+}
+
+//=====================================
+// 获取某个模块参数开关的请求、返回
+message ModuleSwitchRequest {
+	Head head = 1;
+	// 指定请求的module_tag信息
+	// 请求条件未指定时，返回BAD_REQUEST
+	// If module_tag is NOT given, Response BAD_REQUEST
+	ModuleTag module_tag = 5;
+}
+message ModuleSwitchResponse{
+	RespHead head = 1;
+	paramlist.ModuleSwitch module_switch = 5;
+}
+
+// 设置某个模块参数开关的请求、返回
+message SetModuleSwitchRequest {
+	Head head = 1;
+	// 设置信息module_switch
+	// 设置信息未指定时，返回BAD_REQUEST
+	// If module_switch is NOT given, Response BAD_REQUEST
+	paramlist.ModuleSwitch module_switch = 5;
+}
+message SetModuleSwitchResponse {
+	RespHead head = 1;
+	paramlist.ModuleSwitch module_switch = 5;
+}
+
+//=====================================
+// 获取多个模块的参数开关的请求/返回
+message MultiModuleSwitchsRequest {
+	Head head = 1;
+	// 指定请求的module_tags信息
+	// 请求条件未指定时，返回BAD_REQUEST
+	// If module_tags is NOT given, Response BAD_REQUEST
+	repeated ModuleTag module_tags = 5;
+}
+
+message MultiModuleSwitchsResponse {
+	RespHead head = 1;
+	paramlist.MultiModuleSwitchs module_switchs= 5;
+}
+
+// 设置多个模块的开关的请求、返回
+message SetMultiModuleSwitchsRequest{
+	Head head = 1;
+	// If module_switchs is NOT given, Response BAD_REQUEST
+	paramlist.MultiModuleSwitchs module_switchs = 5;
+}
+message SetMultiModuleSwitchsResponse{
+	RespHead head = 1;
+	paramlist.MultiModuleSwitchs module_switchs = 5;
+}
+
+
+

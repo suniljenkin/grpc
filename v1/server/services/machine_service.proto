@@ -1,0 +1,47 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 机器信息服务,提供监护仪机器uuid及版本等信息的查询服务。
+// Details 机器uuid，版本信息
+// MachineService provides methods for querying machine UUID and version.
+
+syntax = "proto3";
+
+package nxp.v1.services;
+
+import "v1/common/definitions/common.proto";
+import "v1/common/definitions/machine/machine_info.proto";
+import "v1/common/definitions/machine/machine_version.proto";
+
+// The Machine service definition.
+
+service MachineService {
+	// 获取机器信息，mach_uuid唯一标识等
+	// Get machine information, such as uuid, etc.
+	// RoleType-ClientType : ROLE_GUEST|ROLE_OPERATOR
+	rpc GetMachineInfo (MachInfoRequest) returns (MachInfoResponse) {}
+	
+	// 获取机器版本信息,外部系统使用
+	// Get machine version.
+	// RoleType-ClientType : ROLE_GUEST|ROLE_OPERATOR
+	rpc GetMachineVersion (MachVerRequest) returns (MachVerResponse) {}
+}
+
+// 获取机器信息的请求 返回
+message MachInfoRequest{
+	Head head = 1;
+}
+message MachInfoResponse{
+	RespHead head = 1;
+	machine.MachineInfo info = 5;
+}
+
+// 获取机器版本的请求 返回
+message MachVerRequest{
+	Head head = 1;
+}
+message MachVerResponse{
+	RespHead head = 1;
+	machine.MachineVersion version = 5;
+}

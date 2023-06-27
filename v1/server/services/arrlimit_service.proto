@@ -1,0 +1,76 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 心律失常报警配置服务
+// Details
+// 心律失常报警限配置服务。
+// 提供心律失常报警限配置信息的获取和设置服务。
+
+// AlarmLimitService provides methods for querying and setting arrhythmia alarm limits.
+
+syntax = "proto3";
+
+package nxp.v1.services;
+
+import "v1/common/definitions/common.proto";
+import "v1/common/definitions/alarmlimit/arrlimit.proto";
+
+// The ArrLimit service definition.
+
+service ArrLimitsService {
+	// 获取所有心律失常报警配置 GET
+	// Get all the available arr limits.
+	// ROLE_GUEST|ROLE_OPERATOR
+	rpc GetArrAlarmLimits (ArrLimitsRequest) returns (ArrLimitsResponse) {}
+
+	// 获取心律失常报警配置 Patch
+	// Gets the limits of the specified arrhythmia alarm.
+	// ROLE_GUEST|ROLE_OPERATOR
+	rpc GetMultiArrAlarmLimits (GetMultiArrLimitsRequest) returns (GetMultiArrLimitsResponse) {}
+
+	// 设置心律失常报警配置 Patch
+	// Set one or more arrhythmia alarm configurations.
+	// ROLE_OPERATOR
+	rpc SetMultiArrAlarmLimits (SetMultiArrLimitsRequest) returns (SetMultiArrLimitsResponse) {}
+	
+}
+
+// ==========================================
+// 获取所有心律失常报警配置的请求 返回
+message ArrLimitsRequest{
+	Head head = 1;
+}
+message ArrLimitsResponse{
+	RespHead head = 1;
+	alarm.ArrLimits arr_limits = 5;
+}
+
+// ===========================================
+// 获取一个或多个心律失常报警配置的请求 返回
+message GetMultiArrLimitsRequest{
+	Head head = 1;
+	// 指定请求的arr_ids信息
+	// 请求条件未指定时，返回BAD_REQUEST
+	// If arr_ids is NOT given, Response BAD_REQUEST
+	repeated string arr_ids = 5;
+}
+message GetMultiArrLimitsResponse{
+	RespHead head = 1;
+	alarm.ArrLimits arr_limits = 5;
+}
+
+// ===========================================
+// 设置一个或多个心律失常报警配置的请求 返回
+message SetMultiArrLimitsRequest{
+	Head head = 1;
+	// If arr_limits NOT given，Response CallStatus::BAD_REQUEST
+	alarm.ArrLimits arr_limits = 5;
+}
+message SetMultiArrLimitsResponse{
+	RespHead head = 1;
+	alarm.ArrLimits arr_limits = 5;
+}
+
+
+

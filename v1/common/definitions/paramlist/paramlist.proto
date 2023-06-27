@@ -1,0 +1,63 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+syntax = "proto3";
+
+import public "v1/common/definitions/datatype.proto";
+
+package nxp.v1.paramlist;
+
+/// 本协议文件描述模块参数的开关信息
+
+// 模块中子参数开关状态
+message ParamSwitch{
+	// Refer to DataType>ParamTag
+	ParamTag param_tag = 1;
+	bool activated = 2;
+}
+
+// 模块中子波形开关状态
+message WaveSwitch{
+	// Refer to DataType>WaveTag
+	WaveTag wave_tag = 1;
+	bool activated = 2;
+}
+
+// 模块及其子参数波形的开关状态
+message ModuleSwitch{
+	// Refer to DataType>ModuleTag
+	ModuleTag module_tag = 1;
+	bool activated = 2;
+	repeated ParamSwitch param_switchs = 3;
+	repeated WaveSwitch wave_switchs = 4;
+}
+
+/// 全部参数列表
+message ParamList {
+	repeated ModuleSwitch paramlist = 1;
+}
+
+/// 多个模块参数开关
+message MultiModuleSwitchs{
+	repeated ModuleSwitch module_switchs = 1;
+}
+
+// 参数开关变化状态，说明事件意义
+enum ParamListLoadE{
+	ParamLoadE_UNSPECIFIED = 0; 
+	ParamLoadE_Load = 1;  	// 加载参数 Load a parameter
+	ParamLoadE_UnLoad = 2; 	// 卸载参数 Unload a parameter
+	ParamLoadE_Changed = 3;	// 更新参数开关 Active or inactive a parameter
+}
+// 参数开关变化通知
+message ParamListNty{
+	// 参数开关变更信息
+	ParamListLoadE load_ev = 1;
+
+	// 变更的参数开关信息
+	MultiModuleSwitchs entity = 6;
+}

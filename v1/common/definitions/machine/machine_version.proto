@@ -1,0 +1,27 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief
+// Details
+
+
+syntax = "proto3";
+
+import public "v1/common/definitions/datatype.proto";
+
+package nxp.v1.machine;
+
+/// 本协议文件描述机器设备版本信息及其属性
+
+
+// 监护仪机器版本信息
+// Machine Version Message
+message MachineVersion {
+	string build_date = 1;
+	// 软件发布版本
+	string software_release_version = 2;
+	// 软件完整版本
+	string software_version = 3;
+}
+

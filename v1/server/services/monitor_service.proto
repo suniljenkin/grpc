@@ -1,0 +1,63 @@
+// Copyright 2020 Edan Instruments, Inc. All rights reserved
+// version 1.0.0
+// Date Oct, 2021
+// Author yanglin
+// Brief 实时监护服务，提供实时参数、波形和报警的请求服务。
+// Details
+// MonitorService provides three server-side streaming RPC methods
+// to transfer realtime data, including parameter values, waveforms and alarms.
+
+
+
+syntax = "proto3";
+
+package nxp.v1.services;
+
+import "v1/common/definitions/common.proto";
+
+import "v1/common/definitions/livedata/paramvalue.proto";
+import "v1/common/definitions/livedata/paramwave.proto";
+import "v1/common/definitions/livedata/paramalarm.proto";
+
+// The Monitor service definition.
+service MonitorService {
+  /////////////////////server-side streaming RPC////////////////
+
+  // Transfer parameter data, server-side streaming RPC
+  // PM will start to transfer parameter data once it is called.
+  // Parameter data will be written to the stream continuously once every one second.
+  // ROLE_GUEST|ROLE_OPERATOR
+  rpc TransferParams (ParamRequest) returns (stream param.ParamValues) {}
+  
+  // 以波形组为一个write单位的传输接口，可一次性传输多个波形数据；
+  // 适用于有较强关联性的波形数据发送,比如多导联ECG波形，以及以模块为单位的波形组
+  // Transfer wave data, package multi waves in a single stream-write,such as ECG.
+  // PM will start to transfer wave data once it is called. 
+  // Wave data will be written to the stream continuously.
+  // Wave size of each message is not fixed. 
+  // For example, sample of ECG_I wave is 500, size will be 500 
+  // if message is written once every one second, and 40 once every 25 ms.
+  // ROLE_GUEST|ROLE_OPERATOR
+  rpc TransferWaves (WaveRequest) returns (stream wave.ParamWaves) {}
+  
+  // Transfer alarm data,include phy alarm, tech alarm,arr alarm
+  // PM will start to transfer alarm data once it is called. Data will be written to the 
+  // stream once every one second over its lifecycle.
+  // ROLE_GUEST|ROLE_OPERATOR
+  rpc TransferAlarms (AlarmRequest) returns (stream alarm.ParamAlarms) {}
+
+}
+
+// =========================================
+
+message ParamRequest{
+	Head head = 1;
+}
+
+message WaveRequest{
+	Head head = 1;
+}
+
+message AlarmRequest{
+	Head head = 1;
+}
